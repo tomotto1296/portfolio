@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RHU — Designer × Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #1a1a1a;
+    --text: #f0ede8;
+    --muted: #888880;
+    --accent: #c8f560;
+    --accent2: #ff6b35;
+    --border: rgba(240,237,232,0.08);
+    --border-hover: rgba(240,237,232,0.18);
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'Noto Sans JP', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
+  }
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1px solid rgba(200,245,96,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+  }
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 26px;
+    letter-spacing: 4px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 2.5rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-size: clamp(120px, 20vw, 260px);
+    letter-spacing: -4px;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(240,237,232,0.04);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+  .hero-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(64px, 10vw, 140px);
+    line-height: 0.92;
+    letter-spacing: -1px;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s ease forwards;
+  }
+  .hero-title .accent { color: var(--accent); }
+  .hero-title .outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--text);
+  }
+  .hero-sub {
+    margin-top: 2rem;
+    max-width: 480px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s ease forwards;
+  }
+  .hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .hero-scroll {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s ease forwards;
+  }
+  .hero-scroll::before {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--muted);
+  }
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s ease forwards;
+  }
+  .stat { text-align: right; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .ticker-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0;
+    background: var(--bg2);
+  }
+  .ticker {
+    display: flex;
+    animation: ticker 22s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 0 2rem;
+  }
+  .ticker-item span { color: var(--accent); margin: 0 0.5rem; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  section { padding: 5rem 2.5rem; }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .section-label::after {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .about-title {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+  .about-title .accent { color: var(--accent); }
+  .about-text {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 2;
+    margin-bottom: 1.2rem;
+  }
+  .skill-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .skill-row:first-child { border-top: 1px solid var(--border); }
+  .skill-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text);
+    white-space: nowrap;
+    margin-right: 1rem;
+  }
+  .skill-bar {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+    margin-right: 1rem;
+  }
+  .skill-fill {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    background: var(--accent);
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .skill-pct {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  #works { background: var(--bg); }
+  .works-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .works-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1;
+    color: var(--text);
+  }
+  .filter-tabs { display: flex; gap: 0.5rem; }
+  .filter-tab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .filter-tab:hover, .filter-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,245,96,0.05);
+  }
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .work-card {
+    background: var(--bg);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: none;
+  }
+  .work-card:hover { background: var(--bg3); }
+  .work-card-large { grid-column: span 2; }
+  .work-num {
+    font-family: var(--font-display);
+    font-size: 48px;
+    color: rgba(240,237,232,0.05);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    transition: color 0.3s;
+  }
+  .work-card:hover .work-num { color: rgba(200,245,96,0.12); }
+  .work-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+  .work-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .work-tag.xr { border-color: rgba(200,245,96,0.3); color: var(--accent); }
+  .work-tag.ar { border-color: rgba(255,107,53,0.3); color: var(--accent2); }
+  .work-tag.video { border-color: rgba(100,180,255,0.3); color: #64b4ff; }
+  .work-name {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--text);
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+  }
+  .work-role { font-size: 12px; color: var(--muted); margin-bottom: 0.8rem; }
+  .work-desc { font-size: 13px; color: rgba(240,237,232,0.45); line-height: 1.8; }
+  .work-arrow {
+    position: absolute;
+    bottom: 1.5rem; right: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .work-card:hover .work-arrow { color: var(--accent); transform: translate(4px, -4px); }
+  #current {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .current-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .current-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .current-label::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+  .current-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4vw, 52px);
+    color: var(--text);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+  .current-desc { font-size: 14px; color: var(--muted); line-height: 2; }
+  .current-role-card {
+    border: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1rem;
+    background: var(--bg3);
+    transition: border-color 0.2s;
+  }
+  .current-role-card:hover { border-color: var(--border-hover); }
+  .role-company {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .role-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 0.3rem; }
+  .role-desc { font-size: 13px; color: var(--muted); }
+  #contact { background: var(--bg); }
+  .contact-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .contact-title {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 8vw, 100px);
+    color: var(--text);
+    line-height: 0.9;
+    letter-spacing: -1px;
+    margin-bottom: 1.5rem;
+  }
+  .contact-title .accent { color: var(--accent); }
+  .contact-sub { font-size: 14px; color: var(--muted); margin-bottom: 3rem; line-height: 1.8; }
+  .contact-links { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .contact-link {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 14px 28px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .contact-link:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,245,96,0.05); }
+  .contact-link.primary {
+    border-color: var(--accent);
+    color: var(--bg);
+    background: var(--accent);
+  }
+  .contact-link.primary:hover { background: transparent; color: var(--accent); }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+    .hero { padding: 0 1.5rem 3rem; }
+    .about-grid, .current-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .works-grid { grid-template-columns: 1fr; }
+    .work-card-large { grid-column: span 1; }
+    .hero-stats { gap: 1.5rem; }
+    footer { flex-direction: column; text-align: center; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="#" class="nav-logo">R<span>H</span>U</a>
+  <div class="nav-links">
+    <a href="#about">about</a>
+    <a href="#works">works</a>
+    <a href="#current">now</a>
+    <a href="#youtube">youtube</a>
+    <a href="#contact">contact</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg-text">RHU</div>
+  <div class="hero-bottom">
+    <div>
+      <div class="hero-tag">Designer × Engineer × Creator</div>
+      <h1 class="hero-title">
+        VIBE<br>
+        <span class="outline">CODER</span><br>
+        <span class="accent">RHU</span>
+      </h1>
+      <p class="hero-sub">XR・AR・3D空間制作から映像クリエイション、バイブコーディングまで。<br>体験をデザインする。</p>
+      <div class="hero-scroll">scroll</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">8+</div>
+        <div class="stat-label">Projects</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Companies</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Ideas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">XR Production <span>✦</span></span>
+    <span class="ticker-item">3D Scene Design <span>✦</span></span>
+    <span class="ticker-item">AR Experience <span>✦</span></span>
+    <span class="ticker-item">Vibe Coding <span>✦</span></span>
+    <span class="ticker-item">Video Creation <span>✦</span></span>
+    <span class="ticker-item">YouTube Shorts <span>✦</span></span>
+    <span class="ticker-item">Event Direction <span>✦</span></span>
+    <span class="ticker-item">UI Design <span>✦</span></span>
+    <span class="ticker-item">XR Production <span>✦</span></span>
+    <span class="ticker-item">3D Scene Design <span>✦</span></span>
+    <span class="ticker-item">AR Experience <span>✦</span></span>
+    <span class="ticker-item">Vibe Coding <span>✦</span></span>
+    <span class="ticker-item">Video Creation <span>✦</span></span>
+    <span class="ticker-item">YouTube Shorts <span>✦</span></span>
+    <span class="ticker-item">Event Direction <span>✦</span></span>
+    <span class="ticker-item">UI Design <span>✦</span></span>
+  </div>
+</div>
+
+<section id="about">
+  <div class="section-label">About</div>
+  <div class="about-grid">
+    <div class="fade-in">
+      <h2 class="about-title">MAKE<br>THINGS<br><span class="accent">REAL.</span></h2>
+      <p class="about-text">XR・AR空間のプロデューサーとして、Matterportを使った3D撮影・編集からイベント進行まで幅広く担当。</p>
+      <p class="about-text">現在は映像クリエイターとして活動しながら、デザインとコードを組み合わせた「バイブコーディング」でプロダクトを作り続けている。</p>
+      <p class="about-text">アイデアを最速で形にすることが得意。</p>
+    </div>
+    <div class="fade-in">
+      <div class="skill-row">
+        <span class="skill-name">XR / 3D Production</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+        <span class="skill-pct">90%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">AR Direction</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+        <span class="skill-pct">85%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Video / Shorts</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+        <span class="skill-pct">80%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">UI / Web Design</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+        <span class="skill-pct">75%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Vibe Coding</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="95"></div></div>
+        <span class="skill-pct">95%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Project Management</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="88"></div></div>
+        <span class="skill-pct">88%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="works" style="padding-top:0">
+  <div class="works-header">
+    <h2 class="works-title fade-in">SKILLS</h2>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="xr">XR / 3D</button>
+      <button class="filter-tab" data-filter="ar">AR</button>
+      <button class="filter-tab" data-filter="video">Video</button>
+    </div>
+  </div>
+  <div class="works-grid">
+    <div class="work-card work-card-large fade-in" data-cat="xr">
+      <div class="work-num">01</div>
+      <div class="work-tags">
+        <span class="work-tag xr">XR</span>
+        <span class="work-tag xr">3D</span>
+        <span class="work-tag">Matterport</span>
+      </div>
+      <div class="work-name">3D空間スキャン<br>& シーン制作</div>
+      <div class="work-role">撮影 / 3D編集 / 制作進行</div>
+      <div class="work-desc">Matterportを用いた360度3Dスキャン撮影・シーン編集・制作ディレクション。リアル空間をデジタルツインとして再現・配信するまでの一連のワークフローを習得。</div>
+    </div>
+    <div class="work-card fade-in" data-cat="xr">
+      <div class="work-num">02</div>
+      <div class="work-tags">
+        <span class="work-tag xr">XR</span>
+        <span class="work-tag">Event</span>
+      </div>
+      <div class="work-name">XRイベント<br>ディレクション</div>
+      <div class="work-role">3Dシーン設計 / 制作進行 / 当日運営</div>
+      <div class="work-desc">都市規模のXRイベントにおける3D空間設計から当日の現場運営まで一貫して担当。複数ステークホルダーをまたいだ制作進行も経験。</div>
+    </div>
+    <div class="work-card fade-in" data-cat="xr">
+      <div class="work-num">03</div>
+      <div class="work-tags">
+        <span class="work-tag xr">XR</span>
+        <span class="work-tag">Metaverse</span>
+        <span class="work-tag">B2B</span>
+      </div>
+      <div class="work-name">メタバース<br>展示会構築</div>
+      <div class="work-role">3Dシーン配置 / 制作進行 / イベント進行</div>
+      <div class="work-desc">バーチャル空間上での展示会ブース設計・配置・運営。メタバースを活用したBtoB向けビジネスイベントの制作フローを担当。</div>
+    </div>
+    <div class="work-card fade-in" data-cat="ar">
+      <div class="work-num">04</div>
+      <div class="work-tags">
+        <span class="work-tag ar">AR</span>
+        <span class="work-tag">Navigation</span>
+        <span class="work-tag">Tourism</span>
+      </div>
+      <div class="work-name">AR観光<br>ナビゲーション</div>
+      <div class="work-role">企画 / 制作進行</div>
+      <div class="work-desc">スマートフォンをかざすだけで地域情報をAR体験できる観光ナビの企画・制作進行を担当。地域活性化を目的としたARコンテンツの設計経験あり。</div>
+    </div>
+    <div class="work-card fade-in" data-cat="ar">
+      <div class="work-num">05</div>
+      <div class="work-tags">
+        <span class="work-tag ar">AR</span>
+        <span class="work-tag">B2B</span>
+        <span class="work-tag">Enterprise</span>
+      </div>
+      <div class="work-name">AR建物案内<br>& 操作ガイド</div>
+      <div class="work-role">企画 / 制作進行</div>
+      <div class="work-desc">大企業・公共施設向けのAR建物案内・機器操作ガイドの企画・制作進行。エンタープライズ向けARソリューションのPM経験を持つ。</div>
+    </div>
+    <div class="work-card work-card-large fade-in" data-cat="video">
+      <div class="work-num">06</div>
+      <div class="work-tags">
+        <span class="work-tag video">Video</span>
+        <span class="work-tag video">Shorts</span>
+        <span class="work-tag">AI</span>
+      </div>
+      <div class="work-name">AI活用<br>映像コンテンツ制作</div>
+      <div class="work-role">企画 / 制作 / ディレクション</div>
+      <div class="work-desc">YouTube Shortsを中心とした短尺動画の企画・制作・ディレクション。AI画像生成・バイブコーディングをテーマにした教育コンテンツを継続的に発信中。</div>
+    </div>
+  </div>
+</section>
+
+<section id="current">
+  <div class="current-inner">
+    <div class="fade-in">
+      <div class="current-label">Now</div>
+      <h2 class="current-title">CURRENTLY<br>CREATING</h2>
+      <p class="current-desc">現在は映像クリエイターとして活動中。YouTube Shortsを中心に短尺動画のディレクションから制作まで。同時にAIを活用したバイブコーディングで自分のプロダクトも開発中。</p>
+    </div>
+    <div class="fade-in">
+      <div class="current-role-card">
+        <div class="role-company">就労支援センター size / 2024 — Present</div>
+        <div class="role-title">映像クリエイター</div>
+        <div class="role-desc">YouTube Shortsを中心とした短尺動画の企画・制作・ディレクション</div>
+      </div>
+      <div class="current-role-card">
+        <div class="role-company">RHU AIstudio / Personal</div>
+        <div class="role-title">Vibe Coder / Designer</div>
+        <div class="role-desc">AIを活用したバイブコーディングでWebアプリ・UIプロダクトを設計・開発</div>
+      </div>
+      <div class="current-role-card">
+        <div class="role-company">XR / AR Production — Past</div>
+        <div class="role-title">XR Producer</div>
+        <div class="role-desc">3D空間制作・ARプロジェクト進行・メタバースイベント運営など複数の大型XR案件を担当</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="youtube" style="background: var(--bg2); border-top: 1px solid var(--border);">
+  <div class="section-label">YouTube</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
+    <div class="fade-in">
+      <h2 style="font-family: var(--font-display); font-size: clamp(36px, 5vw, 64px); color: var(--text); line-height: 1; margin-bottom: 1.5rem;">RHU<br><span style="color: var(--accent);">AIstudio</span></h2>
+      <p style="font-size: 14px; color: var(--muted); line-height: 2; margin-bottom: 2rem;">AI画像生成を「誰でも使えるレベル」にするチャンネル。ComfyUI・Animaなどのツール解説からバイブコーディングまで、実践的なAI活用を発信中。</p>
+      <a href="https://www.youtube.com/@RHUaistudio" target="_blank" style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border: 1px solid rgba(255,68,68,0.4); color: #ff4444; background: rgba(255,68,68,0.05); display: inline-block; transition: all 0.2s;">▶ チャンネルを見る</a>
+    </div>
+    <div class="fade-in" style="display: flex; flex-direction: column; gap: 1px; background: var(--border);">
+      <div style="background: var(--bg3); padding: 1.2rem 1.5rem;">
+        <div style="font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem;">22:59 · 6日前</div>
+        <div style="font-size: 13px; color: var(--text); line-height: 1.5;">【AIかき集め大作戦】独り言がアプリになる？AIかき集め大作戦で、理想のツールを形にする新習慣【バイブコーディング】</div>
+      </div>
+      <div style="background: var(--bg3); padding: 1.2rem 1.5rem;">
+        <div style="font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem;">2:57 · 7日前</div>
+        <div style="font-size: 13px; color: var(--text); line-height: 1.5;">【AI画像生成】「PCの前に座る」という常識を捨てる。スマホ×Tailscaleで実現する、場所の完全自由化</div>
+      </div>
+      <div style="background: var(--bg3); padding: 1.2rem 1.5rem;">
+        <div style="font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem;">4:42 · 10日前 · 371回視聴</div>
+        <div style="font-size: 13px; color: var(--text); line-height: 1.5;">【AI画像生成】キャラ名を入力するだけで特徴を自動反映。AI秘書と作る画像生成環境【anima pipeline】</div>
+      </div>
+      <div style="background: var(--bg3); padding: 1.2rem 1.5rem;">
+        <div style="font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem;">2:37 · 12日前 · 120回視聴</div>
+        <div style="font-size: 13px; color: var(--text); line-height: 1.5;">【AI画像生成】難しそうなComfyUI、実は一瞬です【Anima】</div>
+      </div>
+      <div style="background: var(--bg3); padding: 1.2rem 1.5rem;">
+        <div style="font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem;">1:26 · 13日前 · 89回視聴</div>
+        <div style="font-size: 13px; color: var(--text); line-height: 1.5;">【AI画像生成】数クリックで画像作れる方法｜anima pipeline</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-inner fade-in">
+    <h2 class="contact-title">LET'S<br><span class="accent">TALK.</span></h2>
+    <p class="contact-sub">プロジェクトのご相談、コラボレーション、<br>なんでもお気軽にどうぞ。</p>
+    <div class="contact-links">
+      <a href="https://github.com/tomotto1296/" target="_blank" class="contact-link">GitHub</a>
+      <a href="https://www.youtube.com/@RHUaistudio" target="_blank" class="contact-link" style="border-color: rgba(255,68,68,0.4); color: #ff4444;">▶ YouTube</a>
+      <a href="https://x.com/RHU_AIstudio" target="_blank" class="contact-link primary">X / Twitter</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a href="#" class="footer-logo">RHU</a>
+  <span class="footer-copy">© 2025 RHU — Designer × Engineer × Creator</span>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '16px';
+      cursor.style.height = '16px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '8px';
+      cursor.style.height = '8px';
+    });
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        entry.target.querySelectorAll('.skill-fill').forEach(fill => {
+          const w = fill.dataset.width;
+          fill.style.width = w + '%';
+        });
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  const tabs = document.querySelectorAll('.filter-tab');
+  const cards = document.querySelectorAll('.work-card');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      cards.forEach(card => {
+        card.style.display = (filter === 'all' || card.dataset.cat === filter) ? '' : 'none';
+      });
+    });
+  });
+</script>
+</body>
+</html>
