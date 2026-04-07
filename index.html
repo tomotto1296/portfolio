@@ -515,9 +515,10 @@
   }
   .fade-in.visible { opacity: 1; transform: translateY(0); }
   @media (max-width: 768px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { gap: 1.5rem; }
-    section { padding: 4rem 1.5rem; }
+    nav { padding: 1rem 1.2rem; }
+    .nav-links { gap: 1rem; }
+    .nav-links a { font-size: 9px; letter-spacing: 0.5px; }
+    section { padding: 3rem 1.5rem; }
     .hero { padding: 0 1.5rem 3rem; }
     .about-grid, .current-inner { grid-template-columns: 1fr; gap: 2rem; }
     .works-grid { grid-template-columns: 1fr; }
@@ -526,6 +527,11 @@
     footer { flex-direction: column; text-align: center; }
     body { cursor: auto; }
     .cursor, .cursor-ring { display: none; }
+    /* Projects モバイル対応 */
+    .projects-grid { grid-template-columns: 1fr !important; }
+    .projects-grid > div { grid-column: span 1 !important; min-width: 0 !important; }
+    /* YouTube モバイル対応 */
+    .youtube-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
   }
 </style>
 </head>
@@ -634,7 +640,7 @@
 <section id="projects" style="background: var(--bg3); border-top: 1px solid var(--border);">
   <div class="section-label">Projects</div>
   <h2 class="fade-in" style="font-family: var(--font-display); font-size: clamp(36px, 5vw, 64px); color: var(--text); line-height: 1; margin-bottom: 3rem;">PERSONAL<br><span style="color: var(--accent);">PROJECTS</span></h2>
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border);">
+  <div class="projects-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border);">
     <div class="fade-in" style="grid-column: span 2; background: var(--bg); padding: 2.5rem; position: relative; transition: background 0.3s; cursor: none;" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background='var(--bg)'">
       <div style="font-family: var(--font-display); font-size: 48px; color: rgba(240,237,232,0.05); line-height: 1; margin-bottom: 1.5rem;">01</div>
       <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem;">
@@ -770,10 +776,10 @@
 
 <section id="youtube" style="background: var(--bg2); border-top: 1px solid var(--border);">
   <div class="section-label">YouTube</div>
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
+  <div class="youtube-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
     <div class="fade-in">
       <h2 style="font-family: var(--font-display); font-size: clamp(36px, 5vw, 64px); color: var(--text); line-height: 1; margin-bottom: 1.5rem;">RHU<br><span style="color: var(--accent);">AIstudio</span></h2>
-      <p style="font-size: 14px; color: var(--muted); line-height: 2; margin-bottom: 2rem;">AI画像生成を「誰でも使えるレベル」にするチャンネル。ComfyUI・Animaなどのツール解説からバイブコーディングまで、実践的なAI活用を発信中。</p>
+      <p style="font-size: 14px; color: var(--muted); line-height: 2; margin-bottom: 2rem;">AIを使い倒す実験チャンネル。AI画像生成（ComfyUI / Anima）の使い方から、バイブコーディングで作った自作アプリの紹介・実演まで、実際にやってみたことをそのまま発信中。</p>
       <a href="https://www.youtube.com/@RHUaistudio" target="_blank" style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border: 1px solid rgba(255,68,68,0.4); color: #ff4444; background: rgba(255,68,68,0.05); display: inline-block; transition: all 0.2s;">▶ チャンネルを見る</a>
     </div>
     <div class="fade-in" style="display: flex; flex-direction: column; gap: 1px; background: var(--border);">
